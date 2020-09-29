@@ -320,7 +320,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 			List<Map<String, Object>> result = paginationRepository.fetchPagedData(rootOrg, userId, contextPathId,
 					pageSize, nextPage == null ? pageState : nextPage.toString());
 
-			if (result.isEmpty() || result == null) {
+			if (result == null || result.isEmpty()) {
 				nextPage = null;
 				break;
 			}
@@ -384,9 +384,9 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 				.collect(Collectors.toMap(item -> item.get("content_id").toString(), item -> item));
 		return responseData.stream().peek(data -> {
 			Map<String, Object> ratingDetailMap = allRatings.getOrDefault(data.get(LexConstants.IDENTIFIER).toString(), new HashMap<>());
-			data.put("viewCount", ratingDetailMap.getOrDefault("viewCount", 0.0));
+			data.put("viewCount", ratingDetailMap.getOrDefault("ratingCount", 0.0));
 			data.put("averageRating", ratingDetailMap.getOrDefault("averageRating", 0.0));
-			data.put("uniqueUsersCount", ratingDetailMap.getOrDefault("viewCount", 0.0));
+			data.put("uniqueUsersCount", ratingDetailMap.getOrDefault("ratingCount", 0.0));
 		}).collect(Collectors.toList());
 	}
 	/**
