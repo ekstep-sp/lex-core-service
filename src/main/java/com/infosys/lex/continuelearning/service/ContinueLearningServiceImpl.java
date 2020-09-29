@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.infosys.lex.common.util.LexConstants;
 import com.infosys.lex.progress.bodhi.repo.ContentProgressModel;
 import com.infosys.lex.rating.bodhi.repo.UserContentRatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -377,12 +378,12 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 			return responseData;
 		}
 		List<String> contentIds = new ArrayList<>();
-		responseData.forEach(data -> contentIds.add(data.get("identifier").toString()));
+		responseData.forEach(data -> contentIds.add(data.get(LexConstants.IDENTIFIER).toString()));
 		Map<String, Map<String, Object>> allRatings = userResourceRatingRepo.getAvgRatingAndRatingCountForContentIds(rootOrg, contentIds)
 				.stream()
 				.collect(Collectors.toMap(item -> item.get("content_id").toString(), item -> item));
 		return responseData.stream().peek(data -> {
-			Map<String, Object> ratingDetailMap = allRatings.getOrDefault(data.get("identifier").toString(), new HashMap<>());
+			Map<String, Object> ratingDetailMap = allRatings.getOrDefault(data.get(LexConstants.IDENTIFIER).toString(), new HashMap<>());
 			data.put("viewCount", ratingDetailMap.getOrDefault("viewCount", 0.0));
 			data.put("averageRating", ratingDetailMap.getOrDefault("averageRating", 0.0));
 			data.put("uniqueUsersCount", ratingDetailMap.getOrDefault("viewCount", 0.0));
