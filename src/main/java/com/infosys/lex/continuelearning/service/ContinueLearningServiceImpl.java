@@ -1,16 +1,16 @@
 /**
-© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved. 
+© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved.
 Version: 1.10
 
 Except for any free or open source software components embedded in this Infosys proprietary software program (“Program”),
 this Program is protected by copyright laws, international treaties and other pending or existing intellectual property rights in India,
 the United States and other countries. Except as expressly permitted, any unauthorized reproduction, storage, transmission in any form or
-by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of 
+by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of
 this Program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible
 under the law.
 
 Highly Confidential
- 
+
 */
 package com.infosys.lex.continuelearning.service;
 
@@ -23,10 +23,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import com.infosys.lex.progress.bodhi.repo.ContentProgressModel;
+import com.infosys.lex.rating.bodhi.repo.UserContentRatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,16 +53,18 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 	ContentService contentService;
 	ContinueLearningValidator validator;
 	ContentProgressRepository progress;
+	private final UserContentRatingRepository userResourceRatingRepo;
 
 	@Autowired
 	public ContinueLearningServiceImpl(ContinueLearningRepository continueLearningRepository,
-			ContinueLearningPaginationRepository paginationRepository, ContentService contentService,
-			ContinueLearningValidator validator, ContentProgressRepository progress) {
+									   ContinueLearningPaginationRepository paginationRepository, ContentService contentService,
+									   ContinueLearningValidator validator, ContentProgressRepository progress, UserContentRatingRepository userResourceRatingRepo) {
 		this.continueLearningRepository = continueLearningRepository;
 		this.paginationRepository = paginationRepository;
 		this.contentService = contentService;
 		this.validator = validator;
 		this.progress = progress;
+		this.userResourceRatingRepo = userResourceRatingRepo;
 	}
 
 	@Override
@@ -135,7 +139,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 
 	/**
 	 * Fetch progress of user for the provided content ids.
-	 * 
+	 *
 	 * @param rootOrg
 	 * @param userId
 	 * @param metaData
@@ -160,7 +164,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 
 	/**
 	 * This method is used to process the required data with its meta data
-	 * 
+	 *
 	 * @param resultMaps
 	 * @param metaData
 	 * @param userData
@@ -220,7 +224,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 
 	/**
 	 * This method is used to fetch meta data from ES
-	 * 
+	 *
 	 * @param result         for which meta is to be fetched
 	 * @param requiredFields
 	 * @return Meta in a map format
@@ -240,7 +244,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 
 		Map<String, Map<String, Object>> meta = contentService.filterAndFetchContentMetaToShow(
 				new ArrayList<>(ids), new HashSet<String>(requiredFields));
-		
+
 		// Clear out all previous ids
 		ids.clear();
 
@@ -253,13 +257,13 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 
 	/**
 	 * Retrieve the rating data for a content, which we have fetched earlier.
-	 * 
+	 *
 	 * @param rootOrg
 	 * @param metaKey
 	 * @param meta
 	 * @return
-	 * @throws IOException 
-	 * @throws ParseException 
+	 * @throws IOException
+	 * @throws ParseException
 	 */
 //	@SuppressWarnings("unchecked")
 //	private Object getRatings(String rootOrg, String metaKey, Map<String, Object> meta) {
@@ -279,7 +283,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.infosys.lex.continuelearning.service.ContinueLearningService#
 	 * getLearningDataWithFilters(java.lang.String, java.lang.String, java.util.Set,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String,
@@ -359,6 +363,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 				break;
 			}
 		}
+		filteredData = addRatingsToSearchData(filteredData, rootOrg);
 		retMap.put("results", filteredData);
 		retMap.put("pageSize", pageSize);
 		retMap.put("pageState", nextPage == null ? -1 : nextPage.toString());
@@ -367,10 +372,26 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 		return retMap;
 	}
 
+	private List<Map<String, Object>> addRatingsToSearchData(List<Map<String, Object>> responseData, String rootOrg) {
+		if (responseData.isEmpty()) {
+			return responseData;
+		}
+		List<String> contentIds = new ArrayList<>();
+		responseData.forEach(data -> contentIds.add(data.get("identifier").toString()));
+		Map<String, Map<String, Object>> allRatings = userResourceRatingRepo.getAvgRatingAndRatingCountForContentIds(rootOrg, contentIds)
+				.stream()
+				.collect(Collectors.toMap(item -> item.get("content_id").toString(), item -> item));
+		return responseData.stream().peek(data -> {
+			Map<String, Object> ratingDetailMap = allRatings.getOrDefault(data.get("identifier").toString(), new HashMap<>());
+			data.put("viewCount", ratingDetailMap.getOrDefault("viewCount", 0.0));
+			data.put("averageRating", ratingDetailMap.getOrDefault("averageRating", 0.0));
+			data.put("uniqueUsersCount", ratingDetailMap.getOrDefault("viewCount", 0.0));
+		}).collect(Collectors.toList());
+	}
 	/**
 	 * Build a filter map from the provided data,only if requested.(do not make an
 	 * entry in filter map if default data is collected)
-	 * 
+	 *
 	 * @param isCompleted
 	 * @param isInIntranet
 	 * @param isStandAlone
@@ -398,7 +419,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 	/**
 	 * Applies filter(s) to each data. If multiple filters are provided, the data
 	 * must pass all the filtration before it can be returned.
-	 * 
+	 *
 	 * @param formattedData
 	 * @param filteredData
 	 * @param filterMap
