@@ -7,4 +7,5 @@ public class LexConstants {
 
 	public static final String ACTIVEUSER_DURATION_CONFIG_KEY = "cohorts_activeuser_filter_duration";
 
+	public static final String IDENTIFIER = "identifier";
 }
