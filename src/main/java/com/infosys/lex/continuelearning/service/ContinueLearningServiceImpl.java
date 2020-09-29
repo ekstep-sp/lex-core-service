@@ -298,7 +298,7 @@ public class ContinueLearningServiceImpl implements ContinueLearningService {
 		List<String> requiredFields = new ArrayList<String>(Arrays.asList("appIcon", "artifactUrl", "complexityLevel",
 				"contentType", "description", "downloadUrl", "duration", "identifier", "lastUpdatedOn",
 				"me_totalSessionsCount", "mediaType", "mimeType", "name", "resourceType", "size", "sourceShortName",
-				"status", "averageRating", "totalRating", "isInIntranet", "isStandAlone"));
+				"status", "averageRating", "totalRating", "isInIntranet", "isStandAlone","assetType", "theme"));
 
 		validator.validateUser(rootOrg, userId);
 		validator.validateContextPathId(contextPathId);
