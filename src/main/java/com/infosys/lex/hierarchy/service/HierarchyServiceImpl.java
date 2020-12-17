@@ -1,16 +1,16 @@
 /**
-© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved. 
+© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved.
 Version: 1.10
 
 Except for any free or open source software components embedded in this Infosys proprietary software program (“Program”),
 this Program is protected by copyright laws, international treaties and other pending or existing intellectual property rights in India,
 the United States and other countries. Except as expressly permitted, any unauthorized reproduction, storage, transmission in any form or
-by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of 
+by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of
 this Program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible
 under the law.
 
 Highly Confidential
- 
+
 */
 package com.infosys.lex.hierarchy.service;
 
@@ -60,17 +60,17 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	@Autowired
 	HierarchyProperties accessProps;
-	
+
 	@Autowired
 	UserUtilityService userService;
-	
+
 	LexLogger logger = new LexLogger(HierarchyServiceImpl.class.getName());
-	
+
 	@Autowired
 	ContentProgressService progressService;
 
 	List<String> masterAllowedStatus = Arrays.asList("Live", "Expired", "Deleted","MarkedForDeletion");
-	
+
 	List<String> masterEmailFetchFields = Arrays.asList("creatorContacts", "verifiers");
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -90,7 +90,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		fieldsPassed = (boolean) reqMap.get("fieldsPassed");
 		Boolean fetchOneLevel = (Boolean) reqMap.get("fetchOneLevel");
 		Boolean skipAccessCheck = (Boolean) reqMap.get("skipAccessCheck");
-		
+
 		if (fieldsPassed) {
 			fields = (List<String>) reqMap.get("fields");
 			if (fields == null || fields.isEmpty()) {
@@ -107,7 +107,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 				|| userId.isEmpty()) {
 			throw new BadRequestException("Invalid request body, [rootOrg,org,userId] null or empty");
 		}
-		
+
 		logger.info("Starting fetch of hierarchy from es : ");
 		Map<String, Object> hMap = new HashMap<>();
 		if(fetchOneLevel==null||fetchOneLevel==false) {
@@ -120,7 +120,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		List<String> allIds = getAllIds(hMap);
 		ResponseEntity<HashMap> response = null;
 		try {
-			
+
 			if(skipAccessCheck==null||skipAccessCheck==false) {
 			// restCall for accessCheck
 			String urlPostFix = "/accesscontrol/users/contents?rootOrg=@rootOrg";
@@ -147,18 +147,18 @@ public class HierarchyServiceImpl implements HierarchyService {
 			logger.info("Access Check called for : " +allIds.toString());
 			throw new Exception(e);
 		}
-		
-		
-		Map<String,Object> responseMap = response.getBody(); 
+
+
+		Map<String,Object> responseMap = response.getBody();
 		responseMap = (Map<String, Object>) responseMap.get("result");
 		responseMap = (Map<String, Object>) responseMap.get("response");
 		responseMap = (Map<String, Object>) responseMap.get(userId);
 		if(responseMap==null || responseMap.isEmpty()) {
 			throw new ApplicationLogicError("AccessControl API could not return result for :" +allIds);
 		}
-		accessCheck(hMap,responseMap);		
+		accessCheck(hMap,responseMap);
 		Map<String, Object> userEmailMap = new HashMap<>();
-		
+
 		try {
 			returnOnlyRootOrgMetrics(hMap,rootOrg);
 			userEmailMap = traverseAndCallPid(hMap, rootOrg);
@@ -166,7 +166,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		} catch (Exception e) {
 			logger.info("Failed to get Emails from PID for : " + identifier);
 		}
-		
+
 		try {
 			learningProgressMetrics(hMap, rootOrg, userId, allIds);
 		} catch (Exception e) {
@@ -176,8 +176,8 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return hMap;
 
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	private void traverseAndInsertEmail(Map<String, Object> hMap, Map<String, Object> userEmailMap) {
 		Queue<Map<String, Object>> parentObjs = new LinkedList<>();
@@ -205,8 +205,8 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	}
 
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> traverseAndCallPid(Map<String, Object> hMap, String rootOrg) {
 		Queue<Map<String, Object>> parentObjs = new LinkedList<>();
@@ -231,7 +231,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		Set<String> temp = new HashSet<>(uuids);
 		uuids = new ArrayList<>(temp);
 		if(!uuids.isEmpty()) {
-			logger.info("Data present in uuids list : " + uuids.toString()); 
+			logger.info("Data present in uuids list : " + uuids.toString());
 			allUserEmailData.putAll(userService.getUserEmailsFromUserIds(rootOrg,uuids));
 		}
 		else {
@@ -240,7 +240,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return allUserEmailData;
 
 	}
-	
+
 	private List<String> getUuidsFromList(List<Map<String, Object>> details) {
 		List<String> uuids = new ArrayList<>();
 		for (Map<String, Object> item : details) {
@@ -269,7 +269,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 			parent.put("children", childrenCopy);
 			parentObjs.addAll(childrenCopy);
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -302,7 +302,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 			parent.put("children", childrenCopy);
 			parentObjs.addAll(childrenCopy);
 		}
-		
+
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -517,12 +517,12 @@ public class HierarchyServiceImpl implements HierarchyService {
 		}
 		return resultList;
 	}
-	
+
 	private List<Map<String, Object>> sortInOrder(List<Map<String, Object>> metaList, List<String> identifiers) {
 		List<Map<String,Object>> sortedList = new ArrayList<>();
 		for(String id : identifiers) {
 			for(Map<String, Object> item : metaList) {
-				String metaId = (String) item.get("identifier"); 
+				String metaId = (String) item.get("identifier");
 				if(metaId.equals(id)) {
 					sortedList.add(item);
 				}
@@ -592,8 +592,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 			throws IOException {
 
 		BoolQueryBuilder query = QueryBuilders.boolQuery()
-				.must(QueryBuilders.termQuery("identifier", lexId))
-				.must(QueryBuilders.termsQuery("status", masterAllowedStatus));
+				.must(QueryBuilders.termQuery("identifier", lexId));
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(query);
 		if (fields != null && fields.length > 0) {
@@ -673,10 +672,10 @@ public class HierarchyServiceImpl implements HierarchyService {
 		}
 		return childrenId;
 	}
-	
-	
+
+
 	@SuppressWarnings("null")
-	public Map<String,Object> HierarchyAPI(String identifier,String[] fields) throws IOException 
+	public Map<String,Object> HierarchyAPI(String identifier,String[] fields) throws IOException
 	{
 		SearchRequest searchRequest = new SearchRequest();
 		searchRequest.indices("mlsearch_*");
@@ -686,13 +685,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 		Map<String, Object> parentMeta = getMetaForLexId(searchRequest, fields, identifier);
 		if (parentMeta == null || parentMeta.isEmpty()) {
 			throw new ResourceNotFoundException("Requested meta is not available");
-		}		
-		
+		}
+
 		Map<String, Object> reasons = new HashMap<>();
 		// returns all immediate children of passed Identifier
 		getChildrenReasons(parentMeta,reasons);
 		List<String> children = getChildrenIds(parentMeta);
-		
+
 		if(children!=null||!children.isEmpty()) {
 			List<Map<String,Object>> childrenMetaData = new ArrayList<>();
 			List<Map<String, Object>> childrenMeta = getMetaForLexIdsHierarchy(searchRequest, fields, children);
@@ -715,8 +714,8 @@ public class HierarchyServiceImpl implements HierarchyService {
 		Map<String, Object> parentMeta = getMetaForLexId(searchRequest, fields, resourceId);
 		if (parentMeta == null || parentMeta.isEmpty()) {
 			throw new ResourceNotFoundException("Requested meta is not available");
-		}		
-		
+		}
+
 		Map<String, Object> reasons = new HashMap<>();
 		Map<String,Object> childrenClassifiers = new HashMap<>();
 		Queue<String> metaQueue = new LinkedList<String>();
@@ -737,7 +736,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 			// all immediate children are added to this list
 			List<Map<String, Object>> childrenMeta = getMetaForLexIdsHierarchy(searchRequest, fields, idsToFetch);
-			
+
 			for (Map<String, Object> childMeta : childrenMeta) {
 				getChildrenReasons(childMeta,reasons);
 			}
