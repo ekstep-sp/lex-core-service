@@ -5,5 +5,5 @@ docker run --name lex-core-build lex-core-build:latest &&  docker cp lex-core-bu
 docker rm -f lex-core-build
 docker rmi -f lex-core-build
 
-docker build --no-cache -t 708570229439.dkr.ecr.us-east-1.amazonaws.com/lex-core-service:space-topics-autocomplete .
-docker push 708570229439.dkr.ecr.us-east-1.amazonaws.com/lex-core-service:space-topics-autocomplete
+docker build --no-cache -t lexplatform.azurecr.io/lex-core-service:hierarchy-status-fix .
+docker push lexplatform.azurecr.io/lex-core-service:hierarchy-status-fix
