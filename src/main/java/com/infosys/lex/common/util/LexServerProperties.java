@@ -2,18 +2,18 @@
                Use of this source code is governed by GPL v3 license that can be found in the LICENSE file or at https://opensource.org/licenses/GPL-3.0
                This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 3" */
 /**
-© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved. 
+© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved.
 Version: 1.10
 
 Except for any free or open source software components embedded in this Infosys proprietary software program (“Program”),
 this Program is protected by copyright laws, international treaties and other pending or existing intellectual property rights in India,
 the United States and other countries. Except as expressly permitted, any unauthorized reproduction, storage, transmission in any form or
-by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of 
+by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of
 this Program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible
 under the law.
 
 Highly Confidential
- 
+
 */
 package com.infosys.lex.common.util;
 import org.springframework.beans.factory.annotation.Value;
@@ -112,7 +112,7 @@ public class LexServerProperties {
 
 	@Value("${iap.certification.clientSecret}")
 	private String iapCertificationClientSecret;
-	
+
 	@Value("${com.infosys.root-org}")
 	private String defAccessPathRootOrg;
 
@@ -125,11 +125,33 @@ public class LexServerProperties {
 	@Value("${feedback.allow.selfReply}")
 	private Boolean selfReplyAllow;
 
+	@Value("${pid.service.scheme}")
+	private String pidServiceScheme; // must be like http:// or https://
+
 	@Value("${pid.service.ip}")
 	private String pidIp;
 
 	@Value("${pid.service.port}")
 	private Integer pidPort;
+
+
+	@Value("${pid.service.user-details.endpoint}")
+	private String userDetailsEndpoint;
+
+	@Value("${notification.service.scheme}")
+	private String notificationServiceScheme;
+
+	@Value("${notification.service.ip}")
+	private String notificationServiceIp;
+
+	@Value("${notification.service.port}")
+	private String notificationServicePort;
+
+	@Value("${notification.service.event.endpoint}")
+	private String sendNotificationEndpoint;
+
+	@Value("${users.user-dashboard.url}")
+	private String userDashboardUrl;
 
 	@Value("${auth.service.host}")
 	private String authServiceHost;
@@ -139,19 +161,19 @@ public class LexServerProperties {
 
 	@Value("${certification.retry.gap.days}")
 	private Integer certificationRetryGapInDays;
-	
-	
+
+
 	@Value("${java.eval.server.host}")
 	private String javaEvalServerHost;
-	
+
 	@Value("${java.eval.server.port}")
 	private String javaEvalServerPort;
-	
+
 	@Value("${java.eval.endpoint}")
 	private String javaEvalEndpoint;
-	
-	
-	
+
+
+
 
 	public Integer getCertificationRetryGapInDays() {
 		return certificationRetryGapInDays;
@@ -537,7 +559,7 @@ public class LexServerProperties {
 //	public void setUserDataSource(String userDataSource) {
 //		this.userDataSource = userDataSource;
 //	}
-	
+
 
 	public String getJavaEvalServerHost() {
 		return javaEvalServerHost;
@@ -562,10 +584,61 @@ public class LexServerProperties {
 	public void setJavaEvalEndpoint(String javaEvalEndpoint) {
 		this.javaEvalEndpoint = javaEvalEndpoint;
 	}
-	
-	
-	
 
+	public String getPidServiceScheme() {
+		return pidServiceScheme;
+	}
+
+	public void setPidServiceScheme(String pidServiceScheme) {
+		this.pidServiceScheme = pidServiceScheme;
+	}
+
+	public String getNotificationServiceScheme() {
+		return notificationServiceScheme;
+	}
+
+	public void setNotificationServiceScheme(String notificationServiceScheme) {
+		this.notificationServiceScheme = notificationServiceScheme;
+	}
+	public String getUserDashboardUrl() {
+		return userDashboardUrl;
+	}
+
+	public void setUserDashboardUrl(String userDashboardUrl) {
+		this.userDashboardUrl = userDashboardUrl;
+	}
+
+	public String getNotificationServiceIp() {
+		return notificationServiceIp;
+	}
+
+	public void setNotificationServiceIp(String notificationServiceIp) {
+		this.notificationServiceIp = notificationServiceIp;
+	}
+
+	public String getNotificationServicePort() {
+		return notificationServicePort;
+	}
+
+	public void setNotificationServicePort(String notificationServicePort) {
+		this.notificationServicePort = notificationServicePort;
+	}
+
+	public String getSendNotificationEndpoint() {
+		return sendNotificationEndpoint;
+	}
+
+	public void setSendNotificationEndpoint(String sendNotificationEndpoint) {
+		this.sendNotificationEndpoint = sendNotificationEndpoint;
+	}
+
+	public String getUserDetailsEndpoint() {
+		return userDetailsEndpoint;
+	}
+
+	public void setUserDetailsEndpoint(String userDetailsEndpoint) {
+		this.userDetailsEndpoint = userDetailsEndpoint;
+	}
 
 	@Override
 	public String toString() {
