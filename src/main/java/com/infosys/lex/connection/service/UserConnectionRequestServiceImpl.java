@@ -62,8 +62,10 @@ public class UserConnectionRequestServiceImpl implements UserConnectionRequestSe
 		Optional<UserConnectionRequest> opt = userConnectionRequestRepository.findByRequestedByAndRequestedTo(connectionRequestDTO.getRequestedBy(), connectionRequestDTO.getRequestedTo());
 		if (opt.isPresent()) {
 			userConnectionRequest = opt.get();
-			if (!(userConnectionRequest.getStatus().equals(UserConnectionRequestStatus.Rejected) || userConnectionRequest.getStatus().equals(UserConnectionRequestStatus.Deleted))
-					|| userConnectionRequest.getRequestCount() >= requestLimit) {
+			if (userConnectionRequest.getRequestCount() >= requestLimit) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN, LexConstants.REQUEST_LIMIT_MESSAGE);
+			}
+			if (!(userConnectionRequest.getStatus().equals(UserConnectionRequestStatus.Rejected) || userConnectionRequest.getStatus().equals(UserConnectionRequestStatus.Deleted))) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, LexConstants.INVALID_REQUEST_MESSAGE);
 			}
 		} else {
