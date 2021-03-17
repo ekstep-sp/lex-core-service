@@ -8,4 +8,50 @@ public class LexConstants {
 	public static final String ACTIVEUSER_DURATION_CONFIG_KEY = "cohorts_activeuser_filter_duration";
 
 	public static final String IDENTIFIER = "identifier";
+
+	public static final String ENV_DOMAIN_URL_KEY = ".domain-url";
+
+	public static final String ENV_REQUEST_LIMIT_KEY = ".connection.request-limit";
+
+	public static final String REQUEST_ID = "request_id";
+
+	public static final String INVALID_REQUEST_MESSAGE = "Invalid request";
+
+	public static final String REQUEST_NOT_FOUND_MESSAGE = "Connection Request not found";
+
+	public static final String REQUEST_NOT_PENDING_MESSAGE = "Request is not pending";
+
+	public static final String NEW_REQUEST_EVENT_ID = "new_connection_request";
+
+	public static final String ACCEPT_REQUEST_EVENT_ID = "accept_connection_request";
+
+	public static final String REJECT_REQUEST_EVENT_ID = "reject_connection_request";
+
+	public static final String HASH_REQUESTED_BY = "#requestedBy";
+
+	public static final String HASH_REQUESTED_TO = "#requestedTo";
+
+	public static final String REQUESTED_BY = "requestedBy";
+
+	public static final String REQUESTED_TO = "requestedTo";
+
+	public static final String HASH_REJECT_URL = "#rejectUrl";
+
+	public static final String HASH_ACCEPT_URL = "#acceptUrl";
+
+	public static final String HASH_COMMENT = "#comment";
+
+	public static final String HASH_CONNECTION_EMAIL = "#connectionEmail";
+
+	public static final String HASH_DOMAIN_URL = "#domainUrl";
+
+	public static final String HASH_REQUEST_ID = "#requestId";
+
+	public static final String CHANGE_REQUEST_STATUS_NOT_ALLOWED_MESSAGE = "Change Request status not allowed";
+
+	public static final String INVALID_USER_IDS_MESSAGE = "Invalid userIds";
+
+	public static final String ACCEPT_URL = HASH_DOMAIN_URL + "/app/users/invitation/" + HASH_REQUEST_ID + "?actionType=accept";
+
+	public static final String REJECT_URL = HASH_DOMAIN_URL + "/app/users/invitation/" + HASH_REQUEST_ID + "?actionType=reject";
 }

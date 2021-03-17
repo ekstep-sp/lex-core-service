@@ -5,5 +5,5 @@ docker run --name lex-core-build lex-core-build:latest &&  docker cp lex-core-bu
 docker rm -f lex-core-build
 docker rmi -f lex-core-build
 
-docker build --no-cache -t lexplatform.azurecr.io/lex-core-service:hierarchy-status-fix .
-docker push lexplatform.azurecr.io/lex-core-service:hierarchy-status-fix
+docker build --no-cache -t lexplatform.azurecr.io/lex-core-service:user-connections .
+docker push lexplatform.azurecr.io/lex-core-service:user-connections

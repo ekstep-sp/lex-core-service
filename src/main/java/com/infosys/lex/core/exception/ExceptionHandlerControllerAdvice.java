@@ -2,18 +2,18 @@
                Use of this source code is governed by GPL v3 license that can be found in the LICENSE file or at https://opensource.org/licenses/GPL-3.0
                This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 3" */
 /**
-© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved. 
+© 2017 - 2019 Infosys Limited, Bangalore, India. All Rights Reserved.
 Version: 1.10
 
 Except for any free or open source software components embedded in this Infosys proprietary software program (“Program”),
 this Program is protected by copyright laws, international treaties and other pending or existing intellectual property rights in India,
 the United States and other countries. Except as expressly permitted, any unauthorized reproduction, storage, transmission in any form or
-by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of 
+by any means (including without limitation electronic, mechanical, printing, photocopying, recording or otherwise), or any distribution of
 this Program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible
 under the law.
 
 Highly Confidential
- 
+
 */
 package com.infosys.lex.core.exception;
 
@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -84,7 +85,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles exception for all invalid urls
-	 * 
+	 *
 	 * @param exception
 	 * @return
 	 */
@@ -102,7 +103,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles exception for all invalid urls
-	 * 
+	 *
 	 * @param exception
 	 * @return
 	 */
@@ -119,7 +120,7 @@ public class ExceptionHandlerControllerAdvice {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param httpStatusCodeException
 	 * @return
 	 * @throws JsonParseException
@@ -146,7 +147,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all non caught exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -164,7 +165,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all non caught exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -182,7 +183,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all validation failure exceptions from DTOs
-	 * 
+	 *
 	 * @param ex
 	 * @return
 	 */
@@ -215,7 +216,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all invalid data exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -237,7 +238,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all invalid resource exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -257,7 +258,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all class cast exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -276,7 +277,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all illegal arguments exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -295,7 +296,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all algorithm exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -314,7 +315,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all type mismatch exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -333,7 +334,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all application logic exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -352,7 +353,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all illegal access exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -371,7 +372,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all parse exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -390,7 +391,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all parse exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -409,7 +410,7 @@ public class ExceptionHandlerControllerAdvice {
 
 	/**
 	 * Handles all Servlet Binding exceptions
-	 * 
+	 *
 	 * @param exception
 	 * @param request
 	 * @return
@@ -450,7 +451,7 @@ public class ExceptionHandlerControllerAdvice {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@ExceptionHandler({ ConstraintViolationException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -484,7 +485,7 @@ public class ExceptionHandlerControllerAdvice {
 
 		return errors;
 	}
-	
+
 	@ExceptionHandler({ RestClientException.class })
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public @ResponseBody ClientErrors RestClientExceptionHandler(final RestClientException exception,
@@ -495,4 +496,21 @@ public class ExceptionHandlerControllerAdvice {
 		return errors;
 	}
 
+	/**
+	 * Handles all type mismatch exceptions
+	 *
+	 * @param exception
+	 * @param request
+	 * @return
+	 */
+	@ExceptionHandler({ ResponseStatusException.class })
+	public @ResponseBody ResponseEntity<?> responseStatusException(final ResponseStatusException exception,
+																   final HttpServletRequest request) {
+		ClientErrors errors = new ClientErrors("request.error", exception.getReason());
+
+		// log the exception
+		logger.error(exception);
+
+		return new ResponseEntity<>(errors, exception.getStatus());
+	}
 }
