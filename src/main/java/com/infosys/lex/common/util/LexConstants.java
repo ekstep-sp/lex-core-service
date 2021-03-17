@@ -17,6 +17,8 @@ public class LexConstants {
 
 	public static final String INVALID_REQUEST_MESSAGE = "Invalid request";
 
+	public static final String CONNECTION_ALREADY_EXISTS = "Connection already exists";
+
 	public static final String REQUEST_LIMIT_MESSAGE = "Maximum attempt of sending request reached";
 
 	public static final String REQUEST_NOT_FOUND_MESSAGE = "Connection Request not found";

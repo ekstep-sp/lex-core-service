@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -17,6 +18,11 @@ public class UserConnectionServiceImpl implements UserConnectionService {
 
 	public UserConnectionServiceImpl(UserConnectionsRepository userConnectionsRepository) {
 		this.userConnectionsRepository = userConnectionsRepository;
+	}
+
+	@Override
+	public Optional<UserConnections> getOptionalConnection(UUID connectedFrom, UUID connectedTo) {
+		return userConnectionsRepository.findByConnectedFromAndConnectedTo(connectedFrom, connectedTo);
 	}
 
 	@Override

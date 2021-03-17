@@ -4,7 +4,9 @@ import com.infosys.lex.common.service.NotificationService;
 import com.infosys.lex.common.util.LexConstants;
 import com.infosys.lex.connection.dto.ConnectionRequestDTO;
 import com.infosys.lex.connection.dto.ConnectionRequestUpdateDTO;
+
 import static com.infosys.lex.connection.postgresdb.UserConnectionRequest.UserConnectionRequestStatus;
+
 import com.infosys.lex.connection.postgresdb.UserConnectionRequest;
 import com.infosys.lex.connection.postgresdb.UserConnections;
 import com.infosys.lex.connection.repository.UserConnectionRequestRepository;
@@ -56,9 +58,15 @@ public class UserConnectionRequestServiceImpl implements UserConnectionRequestSe
 		if (connectionRequestDTO.getRequestedTo().equals(connectionRequestDTO.getRequestedBy())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, LexConstants.INVALID_USER_IDS_MESSAGE);
 		}
+		Optional<UserConnections> userConnectionOptional = userConnectionService.getOptionalConnection(
+				connectionRequestDTO.getRequestedBy(),
+				connectionRequestDTO.getRequestedTo());
+		if (userConnectionOptional.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, LexConstants.CONNECTION_ALREADY_EXISTS);
+		}
 		UserConnectionRequest userConnectionRequest = new UserConnectionRequest();
 		Integer requestLimit = env.getProperty(connectionRequestDTO.getRootOrg() + LexConstants.ENV_REQUEST_LIMIT_KEY, Integer.class);
-		requestLimit =  requestLimit == null ? 3 : requestLimit;
+		requestLimit = requestLimit == null ? 3 : requestLimit;
 		Optional<UserConnectionRequest> opt = userConnectionRequestRepository.findByRequestedByAndRequestedTo(connectionRequestDTO.getRequestedBy(), connectionRequestDTO.getRequestedTo());
 		if (opt.isPresent()) {
 			userConnectionRequest = opt.get();
@@ -103,8 +111,7 @@ public class UserConnectionRequestServiceImpl implements UserConnectionRequestSe
 			eventId = LexConstants.ACCEPT_REQUEST_EVENT_ID;
 		} else if (connectionRequestUpdateDTO.getAction().equals(ConnectionRequestUpdateDTO.Action.Reject)) {
 			request.setStatus(UserConnectionRequestStatus.Rejected);
-			eventId = LexConstants.ACCEPT_REQUEST_EVENT_ID;
-
+			eventId = LexConstants.REJECT_REQUEST_EVENT_ID;
 		} else if (connectionRequestUpdateDTO.getAction().equals(ConnectionRequestUpdateDTO.Action.Withdraw)) {
 			request.setStatus(UserConnectionRequestStatus.Deleted);
 			verifyId = request.getRequestedBy();
