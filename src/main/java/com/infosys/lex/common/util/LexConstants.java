@@ -51,11 +51,21 @@ public class LexConstants {
 
 	public static final String HASH_REQUEST_ID = "#requestId";
 
+	public static final String TARGET_URL = "targetUrl";
+
 	public static final String CHANGE_REQUEST_STATUS_NOT_ALLOWED_MESSAGE = "Change Request status not allowed";
 
 	public static final String INVALID_USER_IDS_MESSAGE = "Invalid userIds";
 
-	public static final String ACCEPT_URL = HASH_DOMAIN_URL + "/app/users/invitation/" + HASH_REQUEST_ID + "?actionType=accept";
+	public static final String INVITATION_URL = "/app/users/invitation/";
 
-	public static final String REJECT_URL = HASH_DOMAIN_URL + "/app/users/invitation/" + HASH_REQUEST_ID + "?actionType=reject";
+	public static final String SEARCH_QUERY_CONDITION = "?search_query=";
+
+	public static final String AND_ACTION_TYPE = "&actionType=";
+
+	public static final String ACCEPT = "accept";
+
+	public static final String REJECT = "reject";
+
+	public static final String PUBLIC_USERS_VIEW_URL = "/app/users/list";
 }

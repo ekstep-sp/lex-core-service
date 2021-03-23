@@ -47,13 +47,13 @@ public class NotificationServiceImpl implements NotificationService {
 		List<Map<String, Object>> usersInfo = pidUserService.getUserInfoFromPid(rootOrg, Collections.singletonList(userId), Arrays.asList(PIDConstants.FIRST_NAME, PIDConstants.LAST_NAME, PIDConstants.DEPARTMENT_NAME, PIDConstants.UUID));
 		if (!usersInfo.isEmpty()) {
 			Map<String, Object> userData = usersInfo.get(0);
-			Map<String, Object> targetData = new HashMap<>();
-			targetData.put("#userName", (userData.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
+			Map<String, Object> tagValues = new HashMap<>();
+			tagValues.put("#userName", (userData.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
 					+ " " + userData.getOrDefault(PIDConstants.LAST_NAME, "").toString()).trim());
-			targetData.put("#org", userData.getOrDefault(PIDConstants.DEPARTMENT_NAME, ""));
-			targetData.put("#changeRoleUrl", lexServerProperties.getUserDashboardUrl());
+			tagValues.put("#org", userData.getOrDefault(PIDConstants.DEPARTMENT_NAME, ""));
+			tagValues.put("#changeRoleUrl", lexServerProperties.getUserDashboardUrl());
 			Map<String, List<String>> recipients = Collections.singletonMap(recipientKey, Collections.singletonList(adminWid));
-			return sendNotification(rootOrg, newSignUpEventId, targetData, recipients);
+			return sendNotification(rootOrg, newSignUpEventId, tagValues, Collections.emptyMap(), recipients);
 		}
 		return false;
 	}
@@ -65,19 +65,28 @@ public class NotificationServiceImpl implements NotificationService {
 		if (!usersInfo.isEmpty()) {
 			Map<String, Object> requestedBy = usersInfoMap.get(connectionRequestDTO.getRequestedBy().toString());
 			Map<String, Object> requestedTo = usersInfoMap.get(connectionRequestDTO.getRequestedTo().toString());
-			Map<String, Object> targetData = new HashMap<>();
-			targetData.put(LexConstants.HASH_REQUESTED_BY, (requestedBy.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
+			Map<String, Object> tagValues = new HashMap<>();
+			tagValues.put(LexConstants.HASH_REQUESTED_BY, (requestedBy.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
 					+ " " + requestedBy.getOrDefault(PIDConstants.LAST_NAME, "").toString()).trim());
-			targetData.put(LexConstants.HASH_REQUESTED_TO, (requestedTo.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
+			tagValues.put(LexConstants.HASH_REQUESTED_TO, (requestedTo.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
 					+ " " + requestedTo.getOrDefault(PIDConstants.LAST_NAME, "").toString()).trim());
 			String domainUrl = Objects.requireNonNull(env.getProperty(connectionRequestDTO.getRootOrg() + LexConstants.ENV_DOMAIN_URL_KEY));
-			String acceptUrl = LexConstants.ACCEPT_URL.replace(LexConstants.HASH_DOMAIN_URL, domainUrl).replace(LexConstants.HASH_REQUEST_ID, requestId.toString());
-			String rejectUrl = LexConstants.REJECT_URL.replace(LexConstants.HASH_DOMAIN_URL, domainUrl).replace(LexConstants.HASH_REQUEST_ID, requestId.toString());
-			targetData.put(LexConstants.HASH_ACCEPT_URL, acceptUrl);
-			targetData.put(LexConstants.HASH_REJECT_URL, rejectUrl);
-			targetData.put(LexConstants.HASH_COMMENT, connectionRequestDTO.getComment());
+			StringBuilder invitationUrl = new StringBuilder(domainUrl)
+					.append(LexConstants.INVITATION_URL)
+					.append(requestId)
+					.append(LexConstants.SEARCH_QUERY_CONDITION)
+					.append(tagValues.get(LexConstants.HASH_REQUESTED_BY).toString())
+					.append(LexConstants.AND_ACTION_TYPE);
+			tagValues.put(LexConstants.HASH_ACCEPT_URL, invitationUrl + LexConstants.ACCEPT);
+			tagValues.put(LexConstants.HASH_REJECT_URL, invitationUrl + LexConstants.REJECT);
+			tagValues.put(LexConstants.HASH_COMMENT, connectionRequestDTO.getComment());
+			Map<String, Object> targetData = new HashMap<>();
+			targetData.put(LexConstants.TARGET_URL, new StringBuilder(domainUrl)
+					.append(LexConstants.PUBLIC_USERS_VIEW_URL)
+					.append(LexConstants.SEARCH_QUERY_CONDITION)
+					.append(tagValues.get(LexConstants.HASH_REQUESTED_BY).toString()));
 			Map<String, List<String>> recipients = Collections.singletonMap(LexConstants.REQUESTED_TO, Collections.singletonList(connectionRequestDTO.getRequestedTo().toString()));
-			sendNotification(connectionRequestDTO.getRootOrg(), LexConstants.NEW_REQUEST_EVENT_ID, targetData, recipients);
+			sendNotification(connectionRequestDTO.getRootOrg(), LexConstants.NEW_REQUEST_EVENT_ID, tagValues, targetData, recipients);
 		}
 	}
 
@@ -91,23 +100,30 @@ public class NotificationServiceImpl implements NotificationService {
 		if (!usersInfo.isEmpty()) {
 			Map<String, Object> requestedTo = usersInfoMap.get(actor.toString());
 			Map<String, Object> requestedBy = usersInfoMap.get(recipient.toString());
-			Map<String, Object> targetData = new HashMap<>();
-			targetData.put(LexConstants.HASH_REQUESTED_BY, (requestedBy.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
+			Map<String, Object> tagValues = new HashMap<>();
+			tagValues.put(LexConstants.HASH_REQUESTED_BY, (requestedBy.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
 					+ " " + requestedBy.getOrDefault(PIDConstants.LAST_NAME, "").toString()).trim());
-			targetData.put(LexConstants.HASH_REQUESTED_TO, (requestedTo.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
+			tagValues.put(LexConstants.HASH_REQUESTED_TO, (requestedTo.getOrDefault(PIDConstants.FIRST_NAME, "").toString()
 					+ " " + requestedTo.getOrDefault(PIDConstants.LAST_NAME, "").toString()).trim());
-			targetData.put(LexConstants.HASH_CONNECTION_EMAIL, requestedTo.getOrDefault(PIDConstants.EMAIL, ""));
+			tagValues.put(LexConstants.HASH_CONNECTION_EMAIL, requestedTo.getOrDefault(PIDConstants.EMAIL, ""));
+			String domainUrl = Objects.requireNonNull(env.getProperty(rootOrg + LexConstants.ENV_DOMAIN_URL_KEY));
+			Map<String, Object> targetData = new HashMap<>();
+			targetData.put(LexConstants.TARGET_URL, new StringBuilder(domainUrl)
+					.append(LexConstants.PUBLIC_USERS_VIEW_URL)
+					.append(LexConstants.SEARCH_QUERY_CONDITION)
+					.append(tagValues.get(LexConstants.HASH_REQUESTED_TO).toString()));
 			Map<String, List<String>> recipients = Collections.singletonMap(LexConstants.REQUESTED_BY, Collections.singletonList(recipient.toString()));
-			sendNotification(rootOrg, eventId, targetData, recipients);
+			sendNotification(rootOrg, eventId, tagValues, targetData, recipients);
 		}
 	}
 
-	public boolean sendNotification(String rootOrg, String eventId, Map<String, Object> targetData, Map<String, List<String>> recipients) {
+	public boolean sendNotification(String rootOrg, String eventId, Map<String, Object> tagValues, Map<String, Object> targetData, Map<String, List<String>> recipients) {
 		String url = lexServerProperties.getNotificationServiceScheme() + lexServerProperties.getNotificationServiceIp() + ":" + lexServerProperties.getNotificationServicePort() + lexServerProperties.getSendNotificationEndpoint();
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("event-id", eventId);
-		requestBody.put("tag-value-pair", targetData);
+		requestBody.put("tag-value-pair", tagValues);
 		requestBody.put("recipients", recipients);
+		requestBody.put("target-data", targetData);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("rootOrg", rootOrg);
 		headers.set("org", rootOrg);

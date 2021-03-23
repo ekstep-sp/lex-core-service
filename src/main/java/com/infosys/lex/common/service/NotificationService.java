@@ -13,5 +13,5 @@ public interface NotificationService {
 
 	boolean sendNotificationToAdminForNewUser(String rootOrg, String userId);
 
-	boolean sendNotification(String rootOrg, String eventId, Map<String,Object> targetData, Map<String,List<String>> recipients);
+	boolean sendNotification(String rootOrg, String eventId, Map<String,Object> tagValues, Map<String,Object> targetData, Map<String,List<String>> recipients);
 }
