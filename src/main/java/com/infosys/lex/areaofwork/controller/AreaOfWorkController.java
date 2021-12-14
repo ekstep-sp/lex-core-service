@@ -48,4 +48,12 @@ public class AreaOfWorkController {
         areaOfWorkService.deleteAreaOfWork(rootOrg, userId, areaOfWorkMap);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping("/v3/users/{userid}/deleteMultipleAreaOfWork")
+    public ResponseEntity<String> deleteMultipleAreaOfWork(@RequestHeader(value = "rootOrg") String rootOrg,
+                                                           @PathVariable("userid") String userId, @RequestBody Map<String, Object[]> areaOfWorkMap) {
+
+        areaOfWorkService.deleteMultipleAreaOfWork(rootOrg, userId, areaOfWorkMap);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

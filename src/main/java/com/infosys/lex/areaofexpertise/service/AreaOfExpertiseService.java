@@ -10,4 +10,6 @@ public interface AreaOfExpertiseService {
     public Map<String, Object> getAreaOfExpertise(String rootOrg, String userId);
 
     public void deleteAreaOfExpertise(String rootOrg, String userId, Map<String, Object> areaOfExpertiseMap);
+
+    public void deleteMultipleAreaOfExpertise(String rootOrg, String userId, Map<String, Object[]> areaOfExpertiseMap);
 }

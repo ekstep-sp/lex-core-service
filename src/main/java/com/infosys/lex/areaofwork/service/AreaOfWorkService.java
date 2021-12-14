@@ -10,4 +10,6 @@ public interface AreaOfWorkService {
     public Map<String, Object> getAreaOfWork(String rootOrg, String userId);
 
     public void deleteAreaOfWork(String rootOrg, String userId, Map<String, Object> areaOfWorkMap);
+
+    public void deleteMultipleAreaOfWork(String rootOrg, String userId, Map<String, Object[]> areaOfWorkMap);
 }

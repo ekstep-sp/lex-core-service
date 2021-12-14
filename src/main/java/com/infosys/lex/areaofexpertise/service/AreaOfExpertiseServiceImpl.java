@@ -155,4 +155,43 @@ public class AreaOfExpertiseServiceImpl implements AreaOfExpertiseService {
         }
 
     }
+
+    @Override
+    public void deleteMultipleAreaOfExpertise(String rootOrg, String userId, Map<String, Object[]> areaOfExpertiseMap) {
+
+        if (areaOfExpertiseMap.get("areaOfExpertise") == null || Arrays.toString(areaOfExpertiseMap.get("areaOfExpertise")).isEmpty()) {
+            throw new InvalidDataInputException("invalid.areaOfExpertise");
+        }
+
+        // Validating User
+        if (!userUtilityService.validateUser(rootOrg, userId)) {
+            throw new InvalidDataInputException("invalid.user");
+        }
+
+        AreaOfExpertiseKey areaOfExpertiseKey = new AreaOfExpertiseKey(rootOrg, userId);
+        Object[] areaOfExpertiseArray = areaOfExpertiseMap.get("areaOfExpertise");
+        Optional<AreaOfExpertise> areaOfExpertiseCassandra = areaOfExpertiseCassandraRepo.findById(areaOfExpertiseKey);
+        Timestamp currentDate = new Timestamp(new Date().getTime());
+
+        if (!areaOfExpertiseCassandra.isPresent()) {
+            throw new InvalidDataInputException("areaOfExpertise.notPresent");
+        }
+
+        for (Object areaOfExpertise : areaOfExpertiseArray) {
+            if (!areaOfExpertiseCassandra.get().getAreaOfExpertise().contains(areaOfExpertise)) {
+                throw new InvalidDataInputException("areaOfExpertise.doesNotExist");
+            }
+        }
+
+        if (areaOfExpertiseCassandra.get().getAreaOfExpertise().size() == 1) {
+            areaOfExpertiseCassandraRepo.deleteById(areaOfExpertiseKey);
+        } else {
+            areaOfExpertiseCassandra.get().setUpdatedOn(currentDate);
+            for (Object areaOfExpertise : areaOfExpertiseArray) {
+                areaOfExpertiseCassandra.get().getAreaOfExpertise().remove(areaOfExpertise);
+            }
+            areaOfExpertiseCassandraRepo.save(areaOfExpertiseCassandra.get());
+        }
+
+    }
 }

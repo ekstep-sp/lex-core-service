@@ -49,4 +49,12 @@ public class AreaOfExpertiseController {
         areaOfExpertiseService.deleteAreaOfExpertise(rootOrg, userId, areaOfExpertiseMap);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping("/v3/users/{userid}/deleteMultipleAreaOfExpertise")
+    public ResponseEntity<String> deleteMultipleAreaOfExpertise(@RequestHeader(value = "rootOrg") String rootOrg,
+                                                                @PathVariable("userid") String userId, @RequestBody Map<String, Object[]> areaOfExpertiseMap) {
+
+        areaOfExpertiseService.deleteMultipleAreaOfExpertise(rootOrg, userId, areaOfExpertiseMap);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

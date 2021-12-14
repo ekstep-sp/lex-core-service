@@ -153,4 +153,43 @@ public class AreaOfWorkServiceImpl implements AreaOfWorkService {
         }
 
     }
+
+    @Override
+    public void deleteMultipleAreaOfWork(String rootOrg, String userId, Map<String, Object[]> areaOfWorkMap) {
+
+        if (areaOfWorkMap.get("areaOfWork") == null || Arrays.toString(areaOfWorkMap.get("areaOfWork")).isEmpty()) {
+            throw new InvalidDataInputException("invalid.areaOfWork");
+        }
+
+        // Validating User
+        if (!userUtilityService.validateUser(rootOrg, userId)) {
+            throw new InvalidDataInputException("invalid.user");
+        }
+
+        AreaOfWorkKey areaOfWorkKey = new AreaOfWorkKey(rootOrg, userId);
+        Object[] areaOfWorkArray = areaOfWorkMap.get("areaOfWork");
+        Optional<AreaOfWork> areaOfWorkCassandra = areaOfWorkCassandraRepo.findById(areaOfWorkKey);
+        Timestamp currentDate = new Timestamp(new Date().getTime());
+
+        if (!areaOfWorkCassandra.isPresent()) {
+            throw new InvalidDataInputException("areaOfWork.notPresent");
+        }
+
+        for (Object areaOfWork : areaOfWorkArray) {
+            if (!areaOfWorkCassandra.get().getAreaOfWork().contains(areaOfWork)) {
+                throw new InvalidDataInputException("areaOfWork.doesNotExist");
+            }
+        }
+
+        if (areaOfWorkCassandra.get().getAreaOfWork().size() == 1) {
+            areaOfWorkCassandraRepo.deleteById(areaOfWorkKey);
+        } else {
+            areaOfWorkCassandra.get().setUpdatedOn(currentDate);
+            for (Object areaOfWork : areaOfWorkArray) {
+                areaOfWorkCassandra.get().getAreaOfWork().remove(areaOfWork);
+            }
+            areaOfWorkCassandraRepo.save(areaOfWorkCassandra.get());
+        }
+
+    }
 }
