@@ -181,7 +181,8 @@ public class AreaOfWorkServiceImpl implements AreaOfWorkService {
             }
         }
 
-        if (areaOfWorkCassandra.get().getAreaOfWork().size() == 1) {
+        if (areaOfWorkCassandra.get().getAreaOfWork() != null &&
+                areaOfWorkCassandra.get().getAreaOfWork().size() == 1) {
             areaOfWorkCassandraRepo.deleteById(areaOfWorkKey);
         } else {
             areaOfWorkCassandra.get().setUpdatedOn(currentDate);
