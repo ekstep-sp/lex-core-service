@@ -183,7 +183,8 @@ public class AreaOfExpertiseServiceImpl implements AreaOfExpertiseService {
             }
         }
 
-        if (areaOfExpertiseCassandra.get().getAreaOfExpertise().size() == 1) {
+        if (areaOfExpertiseCassandra.get().getAreaOfExpertise() != null &&
+                areaOfExpertiseCassandra.get().getAreaOfExpertise().size() == 1) {
             areaOfExpertiseCassandraRepo.deleteById(areaOfExpertiseKey);
         } else {
             areaOfExpertiseCassandra.get().setUpdatedOn(currentDate);
