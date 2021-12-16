@@ -5,5 +5,5 @@ docker run --name lex-core-build lex-core-build:latest &&  docker cp lex-core-bu
 docker rm -f lex-core-build
 docker rmi -f lex-core-build
 
-docker build --no-cache -t lexplatform.azurecr.io/lex-core-service:space-v3-sprint-1.1 .
-docker push lexplatform.azurecr.io/lex-core-service:space-v3-sprint-1.1
+docker build --no-cache -t lexplatform.azurecr.io/lex-core-service:space-v3-sprint-1.2 .
+docker push lexplatform.azurecr.io/lex-core-service:space-v3-sprint-1.2

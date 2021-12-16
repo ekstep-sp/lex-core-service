@@ -51,6 +51,8 @@ public class AreaOfWorkServiceImpl implements AreaOfWorkService {
                 setToBeUpdated = new HashSet<String>();
             }
             setToBeUpdated.add(areaOfWork);
+            existingUser.setAreaOfWork(setToBeUpdated);
+            existingUser.setUpdatedOn(currentDate);
             areaOfWorkCassandraRepo.save(existingUser);
         }
     }
@@ -91,6 +93,7 @@ public class AreaOfWorkServiceImpl implements AreaOfWorkService {
                 setToBeUpdated.add(areaOfWork.toString());
             }
             existingUser.setUpdatedOn(currentDate);
+            existingUser.setAreaOfWork(setToBeUpdated);
             areaOfWorkCassandraRepo.save(existingUser);
         }
     }

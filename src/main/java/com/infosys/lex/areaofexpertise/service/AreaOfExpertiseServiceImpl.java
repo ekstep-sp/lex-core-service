@@ -52,6 +52,7 @@ public class AreaOfExpertiseServiceImpl implements AreaOfExpertiseService {
             }
             setToBeUpdated.add(areaOfExpertise);
             existingUser.setUpdatedOn(currentDate);
+            existingUser.setAreaOfExpertise(setToBeUpdated);
             areaOfExpertiseCassandraRepo.save(existingUser);
         }
     }
@@ -93,6 +94,7 @@ public class AreaOfExpertiseServiceImpl implements AreaOfExpertiseService {
                 setToBeUpdated.add(areaOfExpertise.toString());
             }
             existingUser.setUpdatedOn(currentDate);
+            existingUser.setAreaOfExpertise(setToBeUpdated);
             areaOfExpertiseCassandraRepo.save(existingUser);
         }
     }
